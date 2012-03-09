@@ -1,0 +1,492 @@
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+
+      /**************************************************************** 
+        container includes;
+
+        header : title, hn@shanghai meetup
+      
+        content : (left side) 
+                  all about next-meet up
+
+        cal : (right side bar) 
+              -Preview several next meetup's plan
+              -calendar for previous and current 
+              -Previous link of pictures (popup - js)
+
+        footer : license
+      ****************************************************************/
+
+      body{    
+        background-color: black ;   
+        text-align:center;
+        padding:0;
+        margin:10 10 10 10;
+        font-family:arial;
+        font-size:10pt;
+      }
+
+      .container{
+        width:960px;
+        margin:10px 10px;
+        text-align:left;
+      }
+
+      .header{
+        text-align:left;
+      }
+
+      span {
+        color:tomato;
+      }
+
+      /**************************************************************** 
+        Left side      
+      ****************************************************************/
+      .content {
+        border-left:1px solid white;
+        margin: 0 auto;
+        clear: both;
+        text-align: left;
+        width: 720px;
+        color:white;
+        float: left;
+      }
+
+      .en {
+        float: left;
+        margin-bottom:20px;
+        margin-left:10px;
+        padding-top:5px;
+        padding-left:20px;
+        width: 320px;
+      }
+
+      .cn {
+        float: right;
+        margin-bottom:20px;
+        margin-right:10px;
+        padding-top:5px;
+        padding-right:20px;
+        width: 320px;
+      }
+
+      #main h2{
+        color:tomato;
+        border-bottom: 1px dashed #555555;
+        padding-top: 10px;
+        line-height:200%;
+      }
+
+      #main a{
+        color:tomato;
+        text-decoration: none;
+      }
+
+      #main a:hover{
+        text-decoration: underline;
+        color:orange;
+      }
+
+      #main a:active{
+        text-decoration:underline;
+        color:Red;
+      }
+      
+      ul{
+        list-style-type: none;
+        color:orange;
+      }
+      #main li{
+        font-weight: bold;      
+        font-size:12pt;
+      }
+
+      /**************************************************************** 
+        Right side      
+      ****************************************************************/
+      .col {
+        border-left:2px solid white;
+        float:right;
+        width:240px;
+        height:681px;          
+        color:white;            
+        margin-bottom:20px;
+      }
+
+      #row {
+        margin-left: 5px;
+        padding:10px;
+        text-align:left;
+      }
+
+      h2 {
+        text-align:left;
+        color:white;
+      }
+
+      /*******************************
+        preview next evnts
+      *******************************/
+      #next_cal a, #next_cal a:hover{
+        cursor: default;
+        display: block;
+        text-decoration-line: none;
+      }
+
+      .row1 a{
+        color:tomato;
+        text-decoration:none;
+      }
+
+      .row1 a:hover{
+        color:white;
+        font-weight: bold;
+        font-style: italic;
+        text-decoration:none;
+      }
+
+      .row1 a em.hidden{
+        display: none;
+      }
+
+      .row1 a:hover em.hidden{
+        color:tomato;
+        display: inline;        
+        text-align:center;
+        padding-left: 15px;
+        line-height:150%;
+      }
+
+      .row1 a:hover span{ 
+        color:white;
+        font-weight: normal;   
+      }      
+
+      .row1 a.eventdate span{
+        display : none;
+      }
+
+      .row1 a.eventdate:hover span {
+        color:white;
+        background-color:tomato;
+        font-size: 9pt;
+        text-align: left;
+        display: block;
+        width:210px;
+        height:55px;
+        padding:10px 5px 0px 5px;
+      }
+
+      .row1 em.line{
+        border-top: 1px dotted white;
+        line-height:200%;
+        padding-top:2px;
+      }
+
+      /*******************************
+        calendar here
+      *******************************/
+
+      div.row2{
+        position: absolute;
+        top:270px;
+      }
+
+      #cal img{
+        position:absolute;
+        left:0px;
+        top : 35px;
+        z-index: -1;
+      }
+
+      #cal #month{
+        width:210px;
+        padding-left:5px;       
+      }
+
+      .row2 #month a{        
+        float:left;
+        width: 28px;
+        height : 20px;        
+        color:white;
+        font-size:8pt;
+        font-weight: bold;
+        text-decoration: none;
+        text-align:center;
+        line-height:200%;           
+        background-color: black;
+        opacity:0.3;
+        border:1px solid white;    
+      }
+
+      .row2 #month a.week , #month a:hover .week{
+        height : 18px;
+        color:yellow;
+        font-weight: bold;
+        font-style:none;
+        text-decoration:none;
+        line-height:150%;         
+        border-top:none;
+        opacity: 0.5;
+        cursor: default;
+      }    
+      
+      .row2 #month a.week#mon{
+        border-left:none;
+        margin-left:1px;
+      }
+      .row2 #month a.week#sun{
+        border-right: none;
+      }      
+
+      #cal #month a.emp , #month a.date{
+        cursor: default;
+      }
+
+      #cal #month a.our_event {
+        color:red;  
+        text-decoration: none;
+        font-style: normal;
+        background-color: black;
+        opacity: 0.7;
+
+      }
+      #cal #month a:hover .our_event{
+        color:white;
+        text-decoration: none;
+        font-style: normal;
+        background-color: tomato; 
+      }
+      
+      /*******************************
+        Previous Event 
+      *******************************/
+      #previous_cal{
+        position: absolute;
+        top:550px;        
+      }
+      
+      #previous_cal a , #previous_cal a:hover{
+        text-decoration: none;
+        color:peachpuff ;    
+      }
+      
+      #previous_cal li{
+        padding-left : 5px;
+        list-style-type: square;
+        line-height: 150%;
+        color:peachpuff ;  
+      }
+
+
+      /**************************************************************** 
+        footer   
+      ****************************************************************/
+      .footer {
+        width:960px;
+        clear:both;
+        background-color: white;        
+        margin-top:10px;
+        margin-left:10px;
+        text-align:center ;
+      } 
+
+
+    </style>
+
+    <script type="text/javascript">
+     function showmethepictures()
+     {
+       var answer=confirm("Do you like it ?");
+       if(answer==true)
+       {
+         alert("I knew it!");
+         window.close();
+       }
+       else(answer==false)
+       {
+         alert("HOW COME! ");
+         window.close();
+       }
+     }
+     
+  
+     
+    </script>  
+        
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <div class="header">
+        <h2>HN <span>@</span>Shanghai meetup</h2>
+      </div>
+
+      <div class="content">
+        <div id="main">  
+          <div class='what content'>
+            <a name='what'></a>
+            <div class='en'>
+              <h2>What</h2>
+              <p>This meetup is dedicated to people who could be readers of <a href='http://news.ycombinator.com'>Hacker News</a>, really anybody who would be interested by the kind of news this community share; technologists, geeks, entrepreneurs... Just come for discussing your own project, the latest trends or simply meeting with likely minded folks.</p>
+            </div>
+            <div class='cn'>
+              <h2>主题</h2>
+              <p>我们的聚会没有特定的主题。无论您是 <a href='http://news.ycombinator.com'>Hacker News</a> 或类似新闻的读者，或是某项技术的专家、爱好者，抑或是企业家等等，都非常欢迎您来与我们讨论各种您感兴趣的话题，或者闲聊。</p>
+            </div>
+          </div>
+
+          <div class='details content'>
+            <a name='details'></a>
+            <div class='en'>
+              <h2>Next meetup</h2>
+              <ul class="details">
+                <li class="date"><span>Date & time: </span><strong>April 5, 2012 from 7:00 PM</strong> (right after work)</li>
+                <li class="place"><span>Place: </span><strong>Abbey Road, 45 Yueyang road</strong> (near Hengshan Lu)</li>
+              </ul>
+              <p>You can check all <a href="http://lanyrd.com/2012/hnshanghai/">the event's details on Lanyrd</a>. We'll probably be chilling inside near a heater; look for the table with a "招财猫" ("Lucky Cat"). <strong>Free first round of beers for the first 10 attendees</strong>; we'll also have some snacks and dips.</p>
+            </div>
+            <div class='cn'>
+              <h2>近期活动</h2>
+              <ul class="details">
+                <li class="date"><span>Date & time: </span>
+                  <strong>2012年04月05日，下午7:00开始</strong> (下班后)</li>
+                <li class="place"><span>Place: </span><strong>Abbey Road，岳阳路45号</strong> (近衡山路)</li>
+              </ul>
+              <p>您可以到 <a href="http://event.weibo.com/288362/">新浪微博</a> 
+                查看详情。我们将很可能在院子里，请寻找放置有“招财猫”的桌子。<strong>前10位与会者将获赠一杯啤酒</strong>，
+                此外我们还将提供免费小食。</p>
+            </div>
+          </div>
+
+          <div class='about content'>
+            <a name='about'></a>
+            <div class='en'>
+              <h2>About</h2>
+              <p>We are a team of Web and mobile technologists working at a <a href='http://wiredcraft.com'>small company</a> in Shanghai; we like node.js, Python, Linux, Drupal, Ruby, GIS, Android and many, many other (Open Source) technologies.</p>
+            </div>
+            <div class='cn'>
+              <h2>关于</h2>
+              <p>我们是位于上海的一个<a href='http://wiredcraft.com'>小公司</a>，主营网络和移动技术。我们热爱诸如 Node.js、Python、Linux、Drupal 等各种开源技术。</p>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+      </div>
+    </div>
+
+    <div class="col">
+      <div id="row">
+        <div class="row1">
+          <div id='next_cal'>
+            <h2>Next Event</h2>
+            <a href="#nogo" class="eventdate"> April 05. 2012 <em class="hidden"> 7:00 PM 下午 7:00 </em>
+              <span><em>Abbey Road, 45 Yueyang road<br></em><em>(near Hengshan Lu)<br></em><em class="line">Abbey Road，岳阳路45号(近衡山路)</em></span>  
+            </a>
+            <a href="#nogo" class="eventdate"> May 03. 2012 <em class="hidden"> Time  </em>
+              <span><em>Place May's Event here<br></em><em>blvd<br></em><em class="line">地址</em></span>  
+            </a>
+            <a href="#nogo" class="eventdate"> June 07. 2012 <em class="hidden"> Time </em>
+              <span><em>Place June's Event here<br></em><em>blvd<br></em><em class="line">地址</em></span>  
+            </a>
+          </div>
+        </div>
+
+        <div class="row2">
+          <div id="cal">
+            <h2>CALENDAR HERE</h2>
+            <h2>Trial : April </h2>
+            <img src="images/maneki_c.png"/>
+
+            <div id="month">
+              <a href="#nogo" class="week" id="mon">MON</a>
+              <a href="#nogo" class="week">TUE</a>
+              <a href="#nogo" class="week">WED</a>
+              <a href="#nogo" class="week">THU</a>
+              <a href="#nogo" class="week">FRI</a>
+              <a href="#nogo" class="week">SAT</a>
+              <a href="#nogo" class="week" id="sun">SUN</a>
+
+              <div id="first">
+                <a href="#nogo" class="emp"> </a>
+                <a href="#nogo" class="emp"> </a>
+                <a href="#nogo" class="emp"> </a>
+                <a href="#nogo" class="emp"> </a>
+                <a href="#nogo" class="emp"> </a>
+                <a href="#nogo" class="emp"> </a>
+                <a href="#nogo" class="date">1</a>
+              </div>
+
+              <a href="#nogo" class="date">2</a>
+              <a href="#nogo" class="date">3</a>
+              <a href="#nogo" class="date">4</a>
+              <a href="#" onclick="showmethepictures()" class="our_event">5</a>
+              <a href="#nogo" class="date">6</a>
+              <a href="#nogo" class="date">7</a>
+              <a href="#nogo" class="date">8</a>
+
+              <a href="#nogo" class="date">9</a>
+              <a href="#nogo" class="date">10</a>
+              <a href="#nogo" class="date">11</a>
+              <a href="#nogo" class="date">12</a>
+              <a href="#nogo" class="date">13</a>
+              <a href="#nogo" class="date">14</a>
+              <a href="#nogo" class="date">15</a>
+
+              <a href="#nogo" class="date">16</a>
+              <a href="#nogo" class="date">17</a>
+              <a href="#nogo" class="date">18</a>
+              <a href="#nogo" class="date">19</a>
+              <a href="#nogo" class="date">20</a>
+              <a href="#nogo" class="date">21</a>
+              <a href="#nogo" class="date">22</a>
+
+              <a href="#nogo" class="date">23</a>
+              <a href="#nogo" class="date">24</a>
+              <a href="#nogo" class="date">25</a>
+              <a href="#nogo" class="date">26</a>
+              <a href="#nogo" class="date">27</a>
+              <a href="#nogo" class="date">28</a>
+              <a href="#nogo" class="date">29</a>
+
+
+            </div> 
+          </div>
+        </div>
+        <div class="row3">
+          <div id='previous_cal'>
+             <h2>Previous Event</h2>            
+             <li><a href="#" onclick="pictures_x()" >X </a></li>
+             <li><a href="#" onclick="pictures_xx()" >XX </a></li>
+             <li><a href="#" onclick="pictures_0301()">1st March, Let me see ! </a></li>           
+     
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="footer">                    
+      <div class="logo">
+        <a href="http://wiredcraft.com" target="_blank">License</a>
+      </div>
+    </div>
+
+  </body>
+</html>
